@@ -121,17 +121,19 @@ for (const key in obj) {
     const imgUrls = obj[key];
 
       // Loop through each image URL in the property's array
-    for (const url of imgUrls) {
-        const img = document.createElement("img");
+    for (const [index, url] of imgUrls.entries()) {
+        const img = document.createElement('img');
         img.src = url;
+        img.classList.add(`product${index + 1}`); // Set the id of the img element
         div.appendChild(img);
+
+        img.style.position = "absolute";
+        img.style.left = index * 100 + "%";
     }
     }
 }
 }
 makeImageryDivs();
-
-
 
 function revealToSpan(){
     document.querySelectorAll(".reveal")
@@ -168,7 +170,7 @@ tl
 .to('#loader', {
     y: '-100%',
     zIndex: 0,
-    onComplete: ticketFeature,
+    onComplete: clickFeature,
 })
 .from('#section', {
     width: '0',
@@ -186,10 +188,15 @@ loaderAnimation();
 
 var isImageryFullWidth = false;
 
-function ticketFeature() {
+
+let imageclicked;    //store the id of the imagnery contaiing the image clicked
+
+function clickFeature() {
 
 document.querySelectorAll('.imagery').forEach(button => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (event) => {
+
+        imageclicked = event.target.parentNode.id;
 
         isImageryFullWidth = true;
 
@@ -265,6 +272,9 @@ document.body.addEventListener('click', (event) => {
 
     if (!section) {
         isImageryFullWidth = false;
+        for(j=0; j < obj[imageclicked].length; j++){
+            document.querySelector('#'+ imageclicked + " .product" + (j+1)).style.left = j * 100 + '%';
+        }
         gsap.to('.imagery', {
             filter: 'saturate(0.1) brightness(0.5) opacity(1)',
             width: '12.25%',
@@ -353,3 +363,37 @@ document.querySelector('#cross-right').addEventListener('click', function() {
 
 crossAnimation();
 
+function caurselAnimation(){
+
+        document.querySelector('#cross-right').addEventListener('click', function(){
+            for(i=0; i < obj[imageclicked].length; i++){
+                var left = document.querySelector('#'+ imageclicked + " .product" + (i+1)).style.left;
+                var newLeft = parseInt(left) - 100 + '%';
+                if(newLeft == '-' +obj[imageclicked].length * 100+ '%'){
+                    newLeft = '0%';
+                    for(j=0; j < obj[imageclicked].length; j++){
+                        document.querySelector('#'+ imageclicked + " .product" + (j+1)).style.left = j * 100 +100 + '%';
+                    }
+                }
+                document.querySelector('#'+ imageclicked + " .product" + (i+1)).style.left = newLeft;
+            }
+        });
+
+            document.querySelector('#cross-left').addEventListener('click', function(){
+                for(i=0; i < obj[imageclicked].length; i++){
+                    var left = document.querySelector('#'+ imageclicked + " .product" + (i+1)).style.left;
+                    console.log(left);
+                    var newLeft = parseInt(left) + 100 + '%';
+                    // console.log(newLeft);
+                    if(newLeft == obj[imageclicked].length * 100 + '%'){
+                        newLeft = '0%';
+                        for(j=0; j < obj[imageclicked].length; j++){
+                            document.querySelector('#'+ imageclicked + " .product" + (j+1)).style.left = (j - obj[imageclicked].length + 1) * 100 + '%';
+                        }
+                    }
+                    // console.log(newLeft);
+                    document.querySelector('#'+ imageclicked + " .product" + (i+1)).style.left = newLeft;
+                }
+            });
+}
+caurselAnimation();
