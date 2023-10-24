@@ -120,8 +120,45 @@ footer{
     height: 8vw;
     width: 100%;
 }
+#main-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.5vw;
+}
+/* Slide Wrapper */
 
+#slideWrapper{
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.slide-div{
+    height: 80%;
+    width: 3vw;
+    margin: 1%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.slide-div img{
+    height: 100%;
+    width: 85%;
+    object-fit: cover;
+    margin: 4%;
 
+}
+#slider{
+    height: 100%;
+    opacity: 0;
+    width: 3vw;
+    position: absolute;
+    border: 1.5px solid;
+    transition: all 0.5s ease-out;
+}
+/* #image Section */
 #section{
     height: 19vw;
     width: 42vw;

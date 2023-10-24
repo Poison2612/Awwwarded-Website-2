@@ -1,4 +1,4 @@
-//images and color and text Properties
+// ----------------------------------------------------------Images-Data----------------------------------------------------------
 
 var obj = {
     img1: [
@@ -44,7 +44,7 @@ var obj = {
         'https://images.prismic.io/porte-folio/4e0d3c61-1a98-4b82-99db-76854c949b36_moke+up+typo+modulaire.jpg?auto=compress,format&rect=0,224,1649,825&w=1600&h=800'
     ]
 };
-
+// ------------------------------------//images and color and text Properties--------------------------------------------------
 var data = [
     {
         "data-bg-color": "#000000ff", 
@@ -95,7 +95,7 @@ var data = [
         "data-text-down": "design"
     }
 ];
-
+//Make imagery Divs in section
 function makeImageryDivs() {
 const section = document.querySelector("#section");
 
@@ -128,7 +128,7 @@ for (const key in obj) {
         div.appendChild(img);
 
         img.style.position = "absolute";
-        img.style.left = index * 100 + "%";
+        img.style.left = index * 103 + "%";
     }
     }
 }
@@ -136,7 +136,7 @@ for (const key in obj) {
 makeImageryDivs();
 
 function revealToSpan(){
-    document.querySelectorAll(".reveal")
+document.querySelectorAll(".reveal")
 .forEach(function(elem){
     //create two spans
     var parent = document.createElement("span");
@@ -186,19 +186,49 @@ tl
 }
 loaderAnimation();
 
-var isImageryFullWidth = false;
+var isImageryFullWidth = false;  //check if the image is full width
 
+var imageclicked;    //store the id of the imagnery containing the image clicked
 
-let imageclicked;    //store the id of the imagnery contaiing the image clicked
-
+//Click on the image----------------------------------------------//
 function clickFeature() {
 
 document.querySelectorAll('.imagery').forEach(button => {
     button.addEventListener('click', (event) => {
 
-        imageclicked = event.target.parentNode.id;
-
+        imageclicked = event.target.parentNode.id; //store the id of the imagnery containing the image clicked
         isImageryFullWidth = true;
+
+
+        //create the slideshow
+        
+        for(i=0; i < obj[imageclicked].length; i++){
+
+            var imgDiv = document.createElement('div');
+            imgDiv.setAttribute('class', 'slide-div');
+            imgDiv.setAttribute('id', 'slide' + (i+1));
+    
+            document.querySelector('#slideWrapper').appendChild(imgDiv);
+    
+            
+    
+            var img = document.createElement('img');
+            img.setAttribute('src', obj[imageclicked][i]);
+            img.setAttribute('id', 'slideImg' + (i+1));
+            
+            document.querySelector('#slide'+(i+1)).appendChild(img);
+            }
+
+            //create the slider
+            var slider = document.createElement('div');
+            slider.setAttribute('id', 'slider');
+
+            document.querySelector('#slideWrapper').appendChild(slider);
+            document.querySelector('#slider').style.left = '0';    //set the slider to the first image    
+            
+
+
+        //Color and text change
 
         const bgColor = button.getAttribute('data-bg-color');
         document.querySelector("#main").style.backgroundColor = bgColor;
@@ -217,6 +247,9 @@ document.querySelectorAll('.imagery').forEach(button => {
         document.querySelectorAll(".logoHeader path").forEach(button => {
             button.style.fill = fillColor;
         });
+        document.querySelector("#slider").style.borderColor = fillColor;
+
+        //Text change
 
         const textUp = button.getAttribute('data-text-up');
         const textDown = button.getAttribute('data-text-down');
@@ -230,9 +263,12 @@ document.querySelectorAll('.imagery').forEach(button => {
         document.querySelectorAll("#mid-foot h1").forEach(button => {
             button.textContent = textDown;
         });
+
+        //Image widht and filter change
         gsap.to('.imagery', {
             filter: 'saturate(0.1) brightness(0.5) opacity(0)',
             width: '0',
+            margin: '0'
         });
         gsap.to(button, {
             filter: 'saturate(1) brightness(1) opacity(1)',
@@ -263,21 +299,40 @@ document.querySelectorAll('.imagery').forEach(button => {
             duration: 1,
             transition: 'all 0.3s expo.Out'
         })
+        var slidingtl = gsap.timeline();
+        
+        gsap.from('.slide-div',{
+            opacity: 0,
+            height: 0,
+            ease: 'expo.inOut',
+        })
+        gsap.fromTo('#slider', {
+            opacity: 0,
+            width: '0',
+        }, {
+            opacity: 1,
+            width: '3vw',
+            ease: 'expo.inOut',
+            delay: 0.5,
+        });
         
     })
 });
 
+//Click anywhere to go back to normal
 document.body.addEventListener('click', (event) => {
     const section = event.target.closest('#section , #cross-holder > div');
 
     if (!section) {
         isImageryFullWidth = false;
+
         for(j=0; j < obj[imageclicked].length; j++){
             document.querySelector('#'+ imageclicked + " .product" + (j+1)).style.left = j * 100 + '%';
         }
         gsap.to('.imagery', {
             filter: 'saturate(0.1) brightness(0.5) opacity(1)',
             width: '12.25%',
+            margin: '0.2vw'
         });
         gsap.to('.mid',{
             height: "0",
@@ -304,7 +359,27 @@ document.body.addEventListener('click', (event) => {
             duration: 1,
             transition: 'all 0.3s expo.Out'
         })
+        gsap.to('.slide-div', { 
+            height: '0%',
+            opacity: 0,
+            ease: 'expo.inOut',
+            stagger: 0.1,
+            duration: 0.5,
+            })
+        gsap.to('#slider', {
+            opacity: 0,
+            width: '0',
+            ease: 'expo.inOut',
+            duration: 0.5,
+        })
+
+        //Remove the slideshow
+        setTimeout(function(){
+        document.querySelector('#slideWrapper').innerHTML = '';
+        }, 1000);
+        //Color and text change to Normal
         document.querySelector("#main").style.backgroundColor = ''; 
+        imageclicked = ''; //reset the imageclicked variable
 
         document.querySelectorAll(".mid").forEach(button => {
             button.style.backgroundColor = '';
@@ -321,7 +396,7 @@ document.body.addEventListener('click', (event) => {
     }
 });
 }
-
+//Hover Effect
 function hoverAnimation() {
         document.querySelectorAll('.imagery').forEach(button => {
             button.addEventListener('mouseenter', () => {
@@ -337,7 +412,7 @@ function hoverAnimation() {
     });
 }
 hoverAnimation();
-
+//CrossAnimation
 function crossAnimation(){
     var nRotatingAngle = 0;
 
@@ -347,7 +422,6 @@ document.querySelector('#cross-left').addEventListener('click', function() {
         rotation: nRotatingAngle + 'deg',
         duration: 0.3,
     })
-    console.log(nRotatingAngle);
 });
 var pRotatingAngle = 0;
 
@@ -357,10 +431,8 @@ document.querySelector('#cross-right').addEventListener('click', function() {
         rotation: pRotatingAngle + 'deg',
         duration: 0.3,
     })
-    console.log(pRotatingAngle);
 });
 }
-
 crossAnimation();
 
 function caurselAnimation(){
@@ -368,11 +440,11 @@ function caurselAnimation(){
         document.querySelector('#cross-right').addEventListener('click', function(){
             for(i=0; i < obj[imageclicked].length; i++){
                 var left = document.querySelector('#'+ imageclicked + " .product" + (i+1)).style.left;
-                var newLeft = parseInt(left) - 100 + '%';
-                if(newLeft == '-' +obj[imageclicked].length * 100+ '%'){
+                var newLeft = parseInt(left) - 103 + '%';
+                if(newLeft == '-' +obj[imageclicked].length * 103+ '%'){
                     newLeft = '0%';
                     for(j=0; j < obj[imageclicked].length; j++){
-                        document.querySelector('#'+ imageclicked + " .product" + (j+1)).style.left = j * 100 +100 + '%';
+                        document.querySelector('#'+ imageclicked + " .product" + (j+1)).style.left = j * 103 +103 + '%';
                     }
                 }
                 document.querySelector('#'+ imageclicked + " .product" + (i+1)).style.left = newLeft;
@@ -382,18 +454,43 @@ function caurselAnimation(){
             document.querySelector('#cross-left').addEventListener('click', function(){
                 for(i=0; i < obj[imageclicked].length; i++){
                     var left = document.querySelector('#'+ imageclicked + " .product" + (i+1)).style.left;
-                    console.log(left);
-                    var newLeft = parseInt(left) + 100 + '%';
-                    // console.log(newLeft);
-                    if(newLeft == obj[imageclicked].length * 100 + '%'){
+                    var newLeft = parseInt(left) + 103 + '%';
+                    if(newLeft == obj[imageclicked].length * 103 + '%'){
                         newLeft = '0%';
                         for(j=0; j < obj[imageclicked].length; j++){
-                            document.querySelector('#'+ imageclicked + " .product" + (j+1)).style.left = (j - obj[imageclicked].length + 1) * 100 + '%';
+                            document.querySelector('#'+ imageclicked + " .product" + (j+1)).style.left = (j - obj[imageclicked].length + 1) * 103 + '%';
                         }
                     }
-                    // console.log(newLeft);
                     document.querySelector('#'+ imageclicked + " .product" + (i+1)).style.left = newLeft;
                 }
             });
 }
 caurselAnimation();
+
+function sliderAnimation(){
+        document.querySelector('#cross-right').addEventListener('click', function(){
+                var left = document.querySelector('#slider').style.left;
+                var newLeft = parseInt(left) + (100/obj[imageclicked].length) + '%';
+                if(newLeft == '100%'){
+                    newLeft = '0%';
+                }
+                console.log(newLeft);
+                document.querySelector('#slider').style.left = newLeft;
+        });
+
+        
+
+        document.querySelector('#cross-left').addEventListener('click', function(){
+            var left = document.querySelector('#slider').style.left;
+            var differenceslider = 100/obj[imageclicked].length;
+            var newLeft = parseInt(left) - differenceslider + '%';
+
+            console.log((obj[imageclicked].length-1) * differenceslider + '%');
+            if(newLeft < '0%'){
+                newLeft = (obj[imageclicked].length-1) * differenceslider + '%';
+            }
+            document.querySelector('#slider').style.left = newLeft;
+    });
+}
+sliderAnimation();
+
